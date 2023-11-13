@@ -100,7 +100,6 @@ def DeleteValues():
         pass
 
 # Updating values
-# TODO: Update when JSON file is updated
 def ChangeValues():
     print('Changing values in tables...')
     try:
