@@ -27,14 +27,6 @@ OpeningHours = {
     'ToHours' : 'ToHours1'
 }
 
-# Loading JSON file
-LoadJSON = json.load(open('db1.json'))
-
-# JSON data into list
-Companies = LoadJSON['Companies']
-Warehouses = LoadJSON['Warehouses']
-OpeningHours = LoadJSON['OpeningHours']
-
 # Create/connect existing database
 con = sqlite3.connect('CompanyDB1.db')
 cur = con.cursor()
