@@ -50,7 +50,7 @@ def UpdateJSON():
         print('tock...')
         time.sleep(5)
         
-        # check if time has changed
+        # check if time has changed every 10 seconds
         if os.path.getmtime('db1.json') != prev_time:
             print('JSON file has changed, updating tables...')
             
@@ -93,7 +93,6 @@ def DeleteValues():
         pass
 
 # Updating values
-# TODO: Update when JSON file is updated
 def ChangeValues():
     print('Changing values in tables...')
     try:
