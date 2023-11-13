@@ -61,7 +61,6 @@ def UpdateJSON():
             OpeningHours = LoadJSON['OpeningHours']
             
             # update tables based on list data
-            # IDs dont work for some reason
             cur.execute('UPDATE Companies SET Name = "{CompanyName}" WHERE ID = {CompanyID}'.format(CompanyID=Companies[0][0], CompanyName=Companies[0][1]))
             cur.execute('UPDATE Warehouses SET Name = "{WarehouseName}", CompanyID = "{CompanyID}" Address = "{WarehouseAddress}", ZipCode = "{WarehouseZipCode}", City = "{WarehouseCity}", CountryCode = "{WarehouseCountryCode}" WHERE ID = {WarehouseID}'.format(WarehouseID=Warehouses[0][0], CompanyID=Warehouses[0][1], WarehouseName=Warehouses[0][2], WarehouseAddress=Warehouses[0][3], WarehouseZipCode=Warehouses[0][4], WarehouseCity=Warehouses[0][5], WarehouseCountryCode=Warehouses[0][6]))
             cur.execute('UPDATE OpeningHours SET WarehouseID = "{WarehouseID}", Weekday = "{Weekday}", FromHours = "{FromHours}", ToHours = "{ToHours}" WHERE ID = {OpeningHoursID}'.format(OpeningHoursID=OpeningHours[0][0], WarehouseID=OpeningHours[0][1], Weekday=OpeningHours[0][2], FromHours=OpeningHours[0][3], ToHours=OpeningHours[0][4]))
