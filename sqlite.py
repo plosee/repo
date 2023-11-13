@@ -11,6 +11,7 @@ Company = {
 
 Warehouses = {
     'ID' : 1,
+    'CompanyID' : 1,
     'Name' : 'Warehouse1',
     'Address' : 'Address1',
     'ZipCode' : 'ZipCode1',
@@ -20,6 +21,7 @@ Warehouses = {
 
 OpeningHours = {
     'ID' : 1,
+    'WarehouseID' : 1,
     'Weekday' : 1,
     'FromHours' : 'FromHours1',
     'ToHours' : 'ToHours1'
@@ -69,8 +71,8 @@ def UpdateJSON():
             # update tables based on list data
             # IDs dont work for some reason
             cur.execute('UPDATE Companies SET Name = "{CompanyName}" WHERE ID = {CompanyID}'.format(CompanyID=Companies[0][0], CompanyName=Companies[0][1]))
-            cur.execute('UPDATE Warehouses SET Name = "{WarehouseName}", Address = "{WarehouseAddress}", ZipCode = "{WarehouseZipCode}", City = "{WarehouseCity}", CountryCode = "{WarehouseCountryCode}" WHERE ID = {WarehouseID}'.format(WarehouseID=Warehouses[0][0], WarehouseName=Warehouses[0][2], WarehouseAddress=Warehouses[0][3], WarehouseZipCode=Warehouses[0][4], WarehouseCity=Warehouses[0][5], WarehouseCountryCode=Warehouses[0][6]))
-            cur.execute('UPDATE OpeningHours SET Weekday = {Weekday}, FromHours = "{FromHours}", ToHours = "{ToHours}" WHERE ID = {OpeningHoursID}'.format(OpeningHoursID=OpeningHours[0][0], Weekday=OpeningHours[0][2], FromHours=OpeningHours[0][3], ToHours=OpeningHours[0][4]))
+            cur.execute('UPDATE Warehouses SET Name = "{WarehouseName}", CompanyID = "{CompanyID}" Address = "{WarehouseAddress}", ZipCode = "{WarehouseZipCode}", City = "{WarehouseCity}", CountryCode = "{WarehouseCountryCode}" WHERE ID = {WarehouseID}'.format(WarehouseID=Warehouses[0][0], CompanyID=Warehouses[0][1], WarehouseName=Warehouses[0][2], WarehouseAddress=Warehouses[0][3], WarehouseZipCode=Warehouses[0][4], WarehouseCity=Warehouses[0][5], WarehouseCountryCode=Warehouses[0][6]))
+            cur.execute('UPDATE OpeningHours SET WarehouseID = "{WarehouseID}", Weekday = "{Weekday}", FromHours = "{FromHours}", ToHours = "{ToHours}" WHERE ID = {OpeningHoursID}'.format(OpeningHoursID=OpeningHours[0][0], WarehouseID=OpeningHours[0][1], Weekday=OpeningHours[0][2], FromHours=OpeningHours[0][3], ToHours=OpeningHours[0][4]))
             
             con.commit()
             break
@@ -100,6 +102,7 @@ def DeleteValues():
         pass
 
 # Updating values
+# TODO: Update when JSON file is updated
 def ChangeValues():
     print('Changing values in tables...')
     try:
@@ -145,9 +148,11 @@ def OutputJson():
         json.dump(data, json_file, indent=4)
 
 if __name__ == '__main__':
+    
     UpdateJSON()
     # AddValues()
     # DeleteValues()
     # ChangeValues()
     PrintTables()
     OutputJson()
+    
