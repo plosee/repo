@@ -28,8 +28,9 @@ OpeningHours = {
     'ToHours' : 'ToHours1'
 }
 
-data = ''
-
+data = {}
+data2 = {}
+setting_debug = False
 # Create/connect existing database
 con = sqlite3.connect('CompanyDB1.db', check_same_thread=False)
 cur = con.cursor()
@@ -42,34 +43,47 @@ cur.execute("CREATE TABLE IF NOT EXISTS Companies(ID INTEGER PRIMARY KEY AUTOINC
 cur.execute("CREATE TABLE IF NOT EXISTS Warehouses(ID INTEGER PRIMARY KEY AUTOINCREMENT, CompanyID INTEGER, Name TEXT, Address TEXT, ZipCode TEXT, City TEXT, CountryCode TEXT, FOREIGN KEY (CompanyID) REFERENCES Companies(ID))")
 cur.execute("CREATE TABLE IF NOT EXISTS OpeningHours(ID INTEGER PRIMARY KEY AUTOINCREMENT, WarehouseID INTEGER, Weekday INTEGER, FromHours TEXT, ToHours TEXT, FOREIGN KEY (WarehouseID) REFERENCES Warehouses(ID))")
 
-def UpdateJSON():
-    print('Checking JSON file...')
-    # cache a time value to check later
-    prev_time = os.path.getmtime('db1.json')
+# Data = main dictionary
+# Data2 = dictionary to compare with Data
+# data is constantly every 10 seconds updated
+# data 2 is only updated when the dictionary has changed
+# if data != data2 then we update tables with data 
+
+def UpdateDict():
+    time.sleep(2)
+    
+    global data
+    global data2
+    global setting_debug
+    
+    data2 = data
     
     while True:
-        print('tick...')
-        time.sleep(5)
-        print('tock...')
-        time.sleep(5)
         
-        # check if modification time has changed every 10 seconds
-        if os.path.getmtime('db1.json') != prev_time:
-            print('JSON file has changed, updating tables...')
+        time.sleep(10)
+        StringOutput()
+        if setting_debug == True:
+            print('==============================================')
+            print('Checking for changes...')
+            print('==============================================')
             
-            # make 3 lists from JSON data
-            LoadJSON = json.load(open('db1.json'))
-            Companies = LoadJSON['Companies']
-            Warehouses = LoadJSON['Warehouses']
-            OpeningHours = LoadJSON['OpeningHours']
+        # check if modification has occured
+        if data != data2:
+            print('Dictionary has changed, updating tables...')
+            print(data)
+            print('==============================================')
+            # make 3 lists from data
+            Companies = data['Companies']
+            Warehouses = data['Warehouses']
+            OpeningHours = data['OpeningHours']
             
             # update tables based on list data
             cur.execute('UPDATE Companies SET Name = "{CompanyName}" WHERE ID = {CompanyID}'.format(CompanyID=Companies[0][0], CompanyName=Companies[0][1]))
             cur.execute('UPDATE Warehouses SET Name = "{WarehouseName}", CompanyID = "{CompanyID}", Address = "{WarehouseAddress}", ZipCode = "{WarehouseZipCode}", City = "{WarehouseCity}", CountryCode = "{WarehouseCountryCode}" WHERE ID = {WarehouseID}'.format(WarehouseID=Warehouses[0][0], CompanyID=Warehouses[0][1], WarehouseName=Warehouses[0][2], WarehouseAddress=Warehouses[0][3], WarehouseZipCode=Warehouses[0][4], WarehouseCity=Warehouses[0][5], WarehouseCountryCode=Warehouses[0][6]))
             cur.execute('UPDATE OpeningHours SET WarehouseID = "{WarehouseID}", Weekday = "{Weekday}", FromHours = "{FromHours}", ToHours = "{ToHours}" WHERE ID = {OpeningHoursID}'.format(OpeningHoursID=OpeningHours[0][0], WarehouseID=OpeningHours[0][1], Weekday=OpeningHours[0][2], FromHours=OpeningHours[0][3], ToHours=OpeningHours[0][4]))
-            
             con.commit()
-            break
+            
+            data2 = data
 
 # Adding values to tables
 def AddValues():
@@ -197,7 +211,6 @@ def ChangeValues():
     # cur.execute('UPDATE OpeningHours SET Weekday = 1, FromHours = "FromHours1", ToHours = "ToHours1"')
     con.commit()
 
-    
 # Printing table data
 def PrintTables():
     cur.execute('SELECT * FROM Companies')
@@ -232,9 +245,9 @@ def PrintTables():
 #         json.dump(data, json_file, indent=4)
 
 def StringOutput():
-    global data
     
-    print('Putting all values into a string...')
+    global data
+
     cur.execute('SELECT * FROM Companies')
     companies = cur.fetchall()
     cur.execute('SELECT * FROM Warehouses')
@@ -242,30 +255,28 @@ def StringOutput():
     cur.execute('SELECT * FROM OpeningHours')
     openinghours = cur.fetchall()
 
-    datadict = {
+    data = {
         'Companies' : companies,
         'Warehouses' : warehouses,
         'OpeningHours' : openinghours
     }
     
-    data = str(datadict)
-    print(data)
-    
 if __name__ == '__main__':
 
-    t1 = Thread(target=ChangeValues)
+    t1 = Thread(target=UpdateDict)
     t2 = Thread(target=StringOutput)
+    t3 = Thread(target=ChangeValues)
     t1.start()
     t2.start()
+    t3.start()
     t1.join()
     t2.join()
-
+    t3.join()
     
     # AddValues()
     # DeleteValues()
     # ChangeValues()
     # PrintTables()
     # OutputJson()
-    
     
     pass
