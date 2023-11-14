@@ -1,9 +1,7 @@
 import sqlite3
-import main
+import Global
 
-con = main.con
-cur = main.cur
-TableDict = main.TableDict
+TableDict = Global.TableDict
 
 def ChangeValues():
 
@@ -113,7 +111,7 @@ def ChangeValues():
                     
         case '4':
             print('Quitting...')
-            main.menu()
+            quit()
         case _:
             print('Invalid input, please try again...')
             ChangeValues()
@@ -210,7 +208,7 @@ def DeleteValues():
                     DeleteValues()
         case '4':
             print('Quitting...')
-            main.menu()
+            quit()
         case '5':
             x = input('Are you sure you want to delete ALL values? (y/n): ')
             if x == 'y':
@@ -235,9 +233,86 @@ def InsertValues():
     x = input('What table do you want to insert values into? (1. Company/ 2. Warehouse/ 3. OpeningHours/ 4. Default Values/ 5. Quit): ')
     match x:
         case '1':
-            x = input('What CompanyID do you want to insert?: ')
-            TableDict['Companies'][1][0] = x
-            x = input('What CompanyName do you want to insert?: ')
-            TableDict['Companies'][1][1] = x
+            DictLength = len(TableDict[0]) + 1
+            if DictLength == 0:
+                DictLength = 0
+            x = input('What ID do you want to insert?: ')
+            TableDict[0][DictLength][0] = x
+            x = input('What name do you want to insert?: ')
+            TableDict[0][DictLength][1] = x
             print('Inserted values.')
             InsertValues()
+        case '2':
+            DictLength = len(TableDict[1]) + 1
+            if DictLength == 0:
+                DictLength = 0
+            x = input('What ID do you want to insert?: ')
+            TableDict[1][DictLength][0] = x
+            x = input('What CompanyID do you want to insert?: ')
+            TableDict[1][DictLength][1] = x
+            x = input('What name do you want to insert?: ')
+            TableDict[1][DictLength][2] = x
+            x = input('What address do you want to insert?: ')
+            TableDict[1][DictLength][3] = x
+            x = input('What ZipCode do you want to insert?: ')
+            TableDict[1][DictLength][4] = x
+            x = input('What City do you want to insert?: ')
+            TableDict[1][DictLength][5] = x
+            x = input('What CountryCode do you want to insert?: ')
+            TableDict[1][DictLength][6] = x
+            print('Inserted values.')
+            InsertValues()
+        case '3':
+            DictLength = len(TableDict[2]) + 1
+            if DictLength == 0:
+                DictLength = 0
+            x = input('What ID do you want to insert?: ')
+            TableDict[2][DictLength][0] = x
+            x = input('What WarehouseID do you want to insert?: ')
+            TableDict[2][DictLength][1] = x
+            x = input('What Weekday do you want to insert?: ')
+            TableDict[2][DictLength][2] = x
+            x = input('What FromHours do you want to insert?: ')
+            TableDict[2][DictLength][3] = x
+            x = input('What ToHours do you want to insert?: ')
+            TableDict[2][DictLength][4] = x
+            print('Inserted values.')
+            InsertValues()
+        case '4':
+            try:
+                DictLength = len(TableDict[0]) + 1
+            except:
+                DictLength = 0
+            if DictLength == 0:
+                DictLength = 0
+                
+            # Default values for Companies
+            TableDict[0][DictLength][0] = 1
+            TableDict[0][DictLength][1] = 'IKEA'
+            
+            try:
+                DictLength = len(TableDict[0]) + 1
+            except:
+                DictLength = 0
+                
+            # Default values for Warehouses
+            TableDict[1][DictLength][0] = 1
+            TableDict[1][DictLength][1] = 1
+            TableDict[1][DictLength][2] = 'IKEA'
+            TableDict[1][DictLength][3] = 'IKEAvej 1'
+            TableDict[1][DictLength][4] = '0000'
+            TableDict[1][DictLength][5] = 'IKEAby'
+            TableDict[1][DictLength][6] = 'DK'
+            
+            try:
+                DictLength = len(TableDict[0]) + 1
+            except:
+                DictLength = 0
+                
+            # Default values for OpeningHours
+            TableDict[2][DictLength][0] = 1
+            TableDict[2][DictLength][1] = 1
+            TableDict[2][DictLength][2] = 1
+            TableDict[2][DictLength][3] = '00:00'
+            TableDict[2][DictLength][4] = '23:59'
+            print('Inserted default values.')

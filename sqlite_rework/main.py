@@ -2,21 +2,23 @@ import json
 import sqlite3
 import ChangeValues
 import UpdateDB
+import Global
 from time import sleep
 from threading import Thread
 
-TableDict = {}
-TableDict2 = {}
-online = True
+TableDict = Global.TableDict
+TableDict2 = Global.TableDict2
+online = Global.online
 
 # ask user if they wan to use a DB
+DBChoice = Global.DBChoice
 DBChoice = input('Do you want to connect/create a DB? (y/n): ')
 
 if DBChoice == 'y':
     online = True
     # ask for db name
     DBName = input('Enter DB name (empty for default): ')
-    if DBName.endwith('.db'):
+    if DBName.endswith('.db'):
         print('Thank you.')
     elif DBName == '':
         DBName = 'default.db'
@@ -26,8 +28,8 @@ if DBChoice == 'y':
         print('Thank you.')
     
     # connect to db
-    con = sqlite3.connect(DBName, check_same_thread=False)
-    cur = con.cursor()
+    con = Global.con = sqlite3.connect(DBName, check_same_thread=False)
+    cur = Global.cur = con.cursor()
     
     cur.execute('PRAGMA foreign_keys = ON')
     # create tables if they don't exist
@@ -47,9 +49,9 @@ if DBChoice == 'y':
     
     # Inserting DB info into JSON file for backup
     with open('DBBackup.json', 'w') as f:
-        json.dump(TableDict, f, iNDENT=4)
+        json.dump(TableDict, f, indent=4)
         
-else:
+elif DBChoice == 'n':
     online = False
     # ask for json file name
     DBImport = input('Enter JSON file name: ')
@@ -63,6 +65,9 @@ else:
         TableDict = json.load(f)
     TableDict2 = TableDict
 
+else:
+    print('Invalid input. Please try again.')
+    exit()
 
 # By now, we should have the data in a dictionary and json file.
 # We can now start the program.
@@ -82,16 +87,19 @@ def menu():
         case '1':
             ChangeValues.ChangeValues()
         case '2':
-            ChangeValues.ChangeValues
+            ChangeValues.InsertValues()
         case '3':
-            ChangeValues.ChangeValues
+            ChangeValues.DeleteValues()
         case '4':
-            cur.execute("SELECT * FROM Companies")
-            print(cur.fetchall())
-            cur.execute("SELECT * FROM Warehouses")
-            print(cur.fetchall())
-            cur.execute("SELECT * FROM OpeningHours")
-            print(cur.fetchall())
+            if online == True:
+                cur.execute("SELECT * FROM Companies")
+                print(cur.fetchall())
+                cur.execute("SELECT * FROM Warehouses")
+                print(cur.fetchall())
+                cur.execute("SELECT * FROM OpeningHours")
+                print(cur.fetchall())
+            else:
+                print('You are not connected to a DB.')
         case '5':
             with open('DBBackup.json', 'r') as f:
                 print(json.load(f))

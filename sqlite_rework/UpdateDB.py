@@ -1,13 +1,13 @@
 import time
-import main
+import Global
 import json
 
 def Update():
 
-    data = main.TableDict
-    data2 = main.TableDict2
-    con = main.con
-    cur = main.cur
+    data = Global.TableDict
+    data2 = Global.TableDict2
+    con = Global.con
+    cur = Global.cur
     
     while True:
         time.sleep(5)
@@ -15,7 +15,7 @@ def Update():
         if data != data2:
             print('Updating DB...')
             # Inserting DB info into backup and TableDict
-            if main.online == True:
+            if Global.online == True:
                 cur.execute("SELECT * FROM Companies")
                 data['Companies'] = cur.fetchall()
                 cur.execute("SELECT * FROM Warehouses")
@@ -25,12 +25,12 @@ def Update():
             
                 # Inserting DB info into JSON file for backup
                 with open('backup.json', 'w') as f:
-                    json.dump(data, f, iNDENT=4)
+                    json.dump(data, f, indent=4)
                 
             else:
                 # Inserting info from Dict to JSON
                 with open('backup.json', 'w') as f:
-                    json.dump(data, f, iNDENT=4)
+                    json.dump(data, f, indent=4)
                 # Updating info from Dict to Dict2
                 data2 = data
                 print('DB updated.')
