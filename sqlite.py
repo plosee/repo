@@ -138,11 +138,15 @@ def OutputJson():
         json.dump(data, json_file, indent=4)
 
 if __name__ == '__main__':
+    t1 = Thread(target = UpdateJSON)
+    t2 = Thread(target = PrintTables)
+    t1.start()
+    t2.start()  
     
-    UpdateJSON()
+    # UpdateJSON()
     # AddValues()
     # DeleteValues()
     # ChangeValues()
-    PrintTables()
-    OutputJson()
+    # PrintTables()
+    # OutputJson()
     
