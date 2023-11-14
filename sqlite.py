@@ -41,7 +41,7 @@ cur.execute("CREATE TABLE IF NOT EXISTS OpeningHours(ID INTEGER PRIMARY KEY AUTO
 
 def UpdateJSON():
     print('Checking JSON file...')
-    # cache a time value to check later
+    # cache a modification time value to check later
     prev_time = os.path.getmtime('db1.json')
     
     while True:
@@ -50,7 +50,7 @@ def UpdateJSON():
         print('tock...')
         time.sleep(5)
         
-        # check if time has changed every 10 seconds
+        # check if modification time has changed every 10 seconds
         if os.path.getmtime('db1.json') != prev_time:
             print('JSON file has changed, updating tables...')
             
