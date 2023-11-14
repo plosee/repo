@@ -28,7 +28,7 @@ OpeningHours = {
 }
 
 # Create/connect existing database
-con = sqlite3.connect('CompanyDB1.db')
+con = sqlite3.connect('CompanyDB1.db', check_same_thread=False)
 cur = con.cursor()
 
 # Enable FK constraints
