@@ -2,11 +2,12 @@ import sqlite3
 import os
 import json
 import time
+from threading import Thread
 
 # Change these values if you want to add new values to the tables
 Company = {
-    'ID' : 3,
-    'Name' : 'Company3'
+    'ID' : 1,
+    'Name' : 'Company1'
 }
 
 Warehouses = {
@@ -27,6 +28,8 @@ OpeningHours = {
     'ToHours' : 'ToHours1'
 }
 
+data = ''
+
 # Create/connect existing database
 con = sqlite3.connect('CompanyDB1.db', check_same_thread=False)
 cur = con.cursor()
@@ -41,7 +44,7 @@ cur.execute("CREATE TABLE IF NOT EXISTS OpeningHours(ID INTEGER PRIMARY KEY AUTO
 
 def UpdateJSON():
     print('Checking JSON file...')
-    # cache a modification time value to check later
+    # cache a time value to check later
     prev_time = os.path.getmtime('db1.json')
     
     while True:
@@ -84,9 +87,9 @@ def AddValues():
 def DeleteValues():
     try:
         print('Deleting values from tables...')
-        # cur.execute('DELETE FROM Companies WHERE ID = 3')
-        # cur.execute('DELETE FROM Warehouses')
         # cur.execute('DELETE FROM Companies')
+        # cur.execute('DELETE FROM Warehouses')
+        # cur.execute('DELETE FROM OpeningHours')
         con.commit()
     except:
         print("Tables doesn't have any values that match the selection, skipping...")
@@ -94,15 +97,106 @@ def DeleteValues():
 
 # Updating values
 def ChangeValues():
-    print('Changing values in tables...')
-    try:
-        # cur.execute('UPDATE Companies SET Name = "Company3" WHERE ID = 3')
-        # cur.execute('UPDATE Warehouses SET Name = "Warehouse1", Address = "Address1", ZipCode = "ZipCode1", City = "City1", CountryCode = "CountryCode1" WHERE ID = 1')
-        # cur.execute('UPDATE OpeningHours SET Weekday = 1, FromHours = "FromHours1", ToHours = "ToHours1" WHERE ID = 1')
-        con.commit()
-    except:
-        print('No values to change, skipping...')
-        pass
+    wantedit = input('What values do you want to change? (1. Company/2. Warehouse/3. OpeningHours): ')
+    # this time with an UI to make it easier to change values
+    match(wantedit):
+        case '1':
+            x = input('What value do you want to change? (1. ID/2. Name): ')
+            match(x):
+                case '1':
+                    x = input('What ID do you want to change to?: ')
+                    cur.execute('UPDATE Companies SET ID = {ID}'.format(ID=x))         # ID Constraint still applies, so it won't change
+                    print('ID changed to {ID}'.format(ID=x))
+                    ChangeValues()
+                case '2':
+                    x = input('What name do you want to change to?: ')
+                    cur.execute('UPDATE Companies SET Name = "{Name}"'.format(Name=x))
+                    print('Name changed to {Name}'.format(Name=x))
+                    ChangeValues()
+                case _:
+                    print('Invalid input, please try again...')
+                    ChangeValues()
+                    
+        case '2':
+            match(input('What value do you want to change? (1. ID/2. CompanyID/3. Name/4. Address/5. ZipCode/6. City/7. CountryCode): ')):
+                case '1':
+                    x = input('What ID do you want to change to?: ')
+                    cur.execute('UPDATE Warehouses SET ID = {ID}'.format(ID=x))
+                    print('ID changed to {ID}'.format(ID=x))
+                    ChangeValues()
+                case '2':
+                    x = input('What CompanyID do you want to change to?: ')
+                    cur.execute('UPDATE Warehouses SET CompanyID = {CompanyID}'.format(CompanyID=x))
+                    print('CompanyID changed to {CompanyID}'.format(CompanyID=x))
+                    ChangeValues()
+                case '3':
+                    x = input('What name do you want to change to?: ')
+                    cur.execute('UPDATE Warehouses SET Name = "{Name}"'.format(Name=x))
+                    print('Name changed to {Name}'.format(Name=x))
+                    ChangeValues()
+                case '4':
+                    x = input('What address do you want to change to?: ')
+                    cur.execute('UPDATE Warehouses SET Address = "{Address}"'.format(Address=x))
+                    print('Address changed to {Address}'.format(Address=x))
+                    ChangeValues()
+                case '5':
+                    x = input('What ZipCode do you want to change to?: ')
+                    cur.execute('UPDATE Warehouses SET ZipCode = "{ZipCode}"'.format(ZipCode=x))
+                    print('ZipCode changed to {ZipCode}'.format(ZipCode=x))
+                    ChangeValues()
+                case '6':
+                    x = input('What City do you want to change to?: ')
+                    cur.execute('UPDATE Warehouses SET City = "{City}"'.format(City=x))
+                    print('City changed to {City}'.format(City=x))
+                    ChangeValues()
+                case '7':
+                    x = input('What CountryCode do you want to change to?: ')
+                    cur.execute('UPDATE Warehouses SET CountryCode = "{CountryCode}"'.format(CountryCode=x))
+                    print('CountryCode changed to {CountryCode}'.format(CountryCode=x))
+                    ChangeValues()
+                case _:
+                    print('Invalid input, please try again...')
+                    ChangeValues()
+        case '3':
+            match(input('What value do you want to change? (1. ID/2. WarehouseID/3. Weekday/4. FromHours/5. ToHours): ')):
+                case '1':
+                    x = input('What ID do you want to change to?: ')
+                    cur.execute('UPDATE OpeningHours SET ID = {ID}'.format(ID=x))
+                    print('ID changed to {ID}'.format(ID=x))
+                    ChangeValues()
+                case '2':
+                    x = input('What WarehouseID do you want to change to?: ')
+                    cur.execute('UPDATE OpeningHours SET WarehouseID = {WarehouseID}'.format(WarehouseID=x))
+                    print('WarehouseID changed to {WarehouseID}'.format(WarehouseID=x))
+                    ChangeValues()
+                case '3':
+                    x = input('What Weekday do you want to change to?: ')
+                    cur.execute('UPDATE OpeningHours SET Weekday = {Weekday}'.format(Weekday=x))
+                    print('Weekday changed to {Weekday}'.format(Weekday=x))
+                    ChangeValues()
+                case '4':
+                    x = input('What FromHours do you want to change to?: ')
+                    cur.execute('UPDATE OpeningHours SET FromHours = "{FromHours}"'.format(FromHours=x))
+                    print('FromHours changed to {FromHours}'.format(FromHours=x))
+                    ChangeValues()
+                case '5':
+                    x = input('What ToHours do you want to change to?: ')
+                    cur.execute('UPDATE OpeningHours SET ToHours = "{ToHours}"'.format(ToHours=x))
+                    print('ToHours changed to {ToHours}'.format(ToHours=x))
+                    ChangeValues()
+                case _:
+                    print('Invalid input, please try again...')
+                    ChangeValues()
+                    
+        case _:
+            print('Invalid input, please try again...')
+            ChangeValues()
+            
+    # cur.execute('UPDATE Companies SET Name = "Company3"')
+    # cur.execute('UPDATE Warehouses SET Name = "Warehouse1", Address = "Address1", ZipCode = "ZipCode1", City = "City1", CountryCode = "CountryCode1"')
+    # cur.execute('UPDATE OpeningHours SET Weekday = 1, FromHours = "FromHours1", ToHours = "ToHours1"')
+    con.commit()
+
     
 # Printing table data
 def PrintTables():
@@ -117,36 +211,61 @@ def PrintTables():
     print(cur.fetchall())
 
 # Dumping info into json file
-def OutputJson():
-    print('Dumping info into JSON file...')
+# def OutputJson():
+#     print('Dumping info into JSON file...')
+#     cur.execute('SELECT * FROM Companies')
+#     companies = cur.fetchall()
+#     cur.execute('SELECT * FROM Warehouses')
+#     warehouses = cur.fetchall()
+#     cur.execute('SELECT * FROM OpeningHours')
+#     openinghours = cur.fetchall()
+    
+#     # making a dictionary from the data to dump into json file
+#     datadict = {
+#         'Companies' : companies,
+#         'Warehouses' : warehouses,
+#         'OpeningHours' : openinghours
+#     }
+    
+#     # dumping the data into json file with indent
+#     with open('db1.json', 'w') as json_file:
+#         json.dump(data, json_file, indent=4)
+
+def StringOutput():
+    global data
+    
+    print('Putting all values into a string...')
     cur.execute('SELECT * FROM Companies')
     companies = cur.fetchall()
     cur.execute('SELECT * FROM Warehouses')
     warehouses = cur.fetchall()
     cur.execute('SELECT * FROM OpeningHours')
     openinghours = cur.fetchall()
-    
-    # making a dictionary from the data to dump into json file
-    data = {
+
+    datadict = {
         'Companies' : companies,
         'Warehouses' : warehouses,
         'OpeningHours' : openinghours
     }
     
-    # dumping the data into json file with indent
-    with open('db1.json', 'w') as json_file:
-        json.dump(data, json_file, indent=4)
-
-if __name__ == '__main__':
-    t1 = Thread(target = UpdateJSON)
-    t2 = Thread(target = PrintTables)
-    t1.start()
-    t2.start()  
+    data = str(datadict)
+    print(data)
     
-    # UpdateJSON()
+if __name__ == '__main__':
+
+    t1 = Thread(target=ChangeValues)
+    t2 = Thread(target=StringOutput)
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
+
+    
     # AddValues()
     # DeleteValues()
     # ChangeValues()
     # PrintTables()
     # OutputJson()
     
+    
+    pass
