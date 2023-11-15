@@ -32,8 +32,10 @@ if DBChoice == 'y':
     con = Global.con
     Global.cur = con.cursor()
     cur = Global.cur
+    
     # enable foreign keys
     cur.execute('PRAGMA foreign_keys = ON')
+    
     # create tables if they don't exist
     cur.execute("CREATE TABLE IF NOT EXISTS Companies(ID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT)")
     cur.execute("CREATE TABLE IF NOT EXISTS Warehouses(ID INTEGER PRIMARY KEY AUTOINCREMENT, CompanyID INTEGER, Name TEXT, Address TEXT, ZipCode TEXT, City TEXT, CountryCode TEXT, FOREIGN KEY (CompanyID) REFERENCES Companies(ID))")
