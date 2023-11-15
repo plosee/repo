@@ -8,7 +8,7 @@ from threading import Thread
 
 TableDict = Global.TableDict
 TableDict2 = Global.TableDict2
-
+# i dont think these variables actually matter
 
 # ask user if they wan to use a DB
 DBChoice = Global.DBChoice
