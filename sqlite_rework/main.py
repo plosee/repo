@@ -8,14 +8,14 @@ from threading import Thread
 
 TableDict = Global.TableDict
 TableDict2 = Global.TableDict2
-online = Global.online
+
 
 # ask user if they wan to use a DB
 DBChoice = Global.DBChoice
 DBChoice = input('Do you want to connect/create a DB? (y/n): ')
 
 if DBChoice == 'y':
-    online = True
+    Global.online = True
     # ask for db name
     DBName = input('Enter DB name (empty for default): ')
     if DBName.endswith('.db'):
@@ -28,9 +28,11 @@ if DBChoice == 'y':
         print('Thank you.')
     
     # connect to db
-    con = Global.con = sqlite3.connect(DBName, check_same_thread=False)
-    cur = Global.cur = con.cursor()
-    
+    Global.con = sqlite3.connect(DBName, check_same_thread=False)
+    con = Global.con
+    Global.cur = con.cursor()
+    cur = Global.cur
+    # enable foreign keys
     cur.execute('PRAGMA foreign_keys = ON')
     # create tables if they don't exist
     cur.execute("CREATE TABLE IF NOT EXISTS Companies(ID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT)")
@@ -40,19 +42,19 @@ if DBChoice == 'y':
     
     # Inserting DB info into TableDict
     cur.execute("SELECT * FROM Companies")
-    TableDict['Companies'] = cur.fetchall()
+    Global.TableDict['Companies'] = cur.fetchall()
     cur.execute("SELECT * FROM Warehouses")
-    TableDict['Warehouses'] = cur.fetchall()
+    Global.TableDict['Warehouses'] = cur.fetchall()
     cur.execute("SELECT * FROM OpeningHours")
-    TableDict['OpeningHours'] = cur.fetchall()
-    TableDict2 = TableDict
+    Global.TableDict['OpeningHours'] = cur.fetchall()
+    Global.TableDict2 = Global.TableDict
     
     # Inserting DB info into JSON file for backup
     with open('DBBackup.json', 'w') as f:
-        json.dump(TableDict, f, indent=4)
+        json.dump(Global.TableDict, f, indent=4)
         
 elif DBChoice == 'n':
-    online = False
+    Global.online = False
     # ask for json file name
     DBImport = input('Enter JSON file name: ')
     if DBImport.endswith('.json'):
@@ -62,8 +64,8 @@ elif DBChoice == 'n':
         print('Thank you.')
     # import json file
     with open(DBImport, 'r') as f:
-        TableDict = json.load(f)
-    TableDict2 = TableDict
+        Global.TableDict = json.load(f)
+    Global.TableDict2 = Global.TableDict
 
 else:
     print('Invalid input. Please try again.')
@@ -91,7 +93,7 @@ def menu():
         case '3':
             ChangeValues.DeleteValues()
         case '4':
-            if online == True:
+            if Global.online == True:
                 cur.execute("SELECT * FROM Companies")
                 print(cur.fetchall())
                 cur.execute("SELECT * FROM Warehouses")
@@ -104,7 +106,7 @@ def menu():
             with open('DBBackup.json', 'r') as f:
                 print(json.load(f))
         case '6':
-            print(TableDict)
+            print(Global.TableDict)
         case '7':
             t1 = Thread(target=UpdateDB.Update)
             t1.start()
