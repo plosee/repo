@@ -1,0 +1,22 @@
+{
+    "Companies": [
+        1,
+        "IKEA"
+    ],
+    "Warehouses": [
+        1,
+        1,
+        "IKEA",
+        "IKEAvej 1",
+        "0000",
+        "IKEAby",
+        "DK"
+    ],
+    "OpeningHours": [
+        1,
+        1,
+        1,
+        "00:00",
+        "23:59"
+    ]
+}
