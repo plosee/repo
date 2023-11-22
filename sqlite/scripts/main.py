@@ -13,13 +13,13 @@ TableDict2 = Global.TableDict2
 PATH = 'X:/sqlite/JSON/backup.json'
 PATH_CHANGE = 'X:/sqlite/JSON/'
 
-# ask user if they wan to use a DB
+# ask user if they want to use a DB
 DBChoice = Global.DBChoice
 DBChoice = input('Do you want to connect/create a DB? (y/n): ')
 
 if DBChoice == 'y':
     Global.online = True
-    # ask for db name
+    # ask for db name and format it correctly
     DBName = input('Enter DB name (empty for default): ')
     if DBName.endswith('.db'):
         print('Thank you.')
@@ -31,10 +31,11 @@ if DBChoice == 'y':
         print('Thank you.')
     
     # connect to db
-    Global.con = sqlite3.connect(DBName, check_same_thread=False)
+    Global.con = sqlite3.connect('X:/sqlite/scripts/' + DBName, check_same_thread=False)
     con = Global.con
     Global.cur = con.cursor()
     cur = Global.cur
+    # i'm really dumb so i made them local variables and ofcourse i'm too lazy to change them again
     # enable foreign keys
     cur.execute('PRAGMA foreign_keys = ON')
     # create tables if they don't exist
@@ -52,20 +53,19 @@ if DBChoice == 'y':
     Global.TableDict['OpeningHours'] = cur.fetchall()
     Global.TableDict2 = Global.TableDict
     
-    # Inserting DB info into JSON file for backup
-    with open(PATH, 'w') as f:
-        json.dump(Global.TableDict, f, indent=4)
-        
 elif DBChoice == 'n':
     Global.online = False
     # ask for json file name
     DBImport = input('Enter JSON file name: ')
     if DBImport.endswith('.json'):
         print('Thank you.')
+    elif DBImport == '':
+        DBImport = 'backup.json'
+        print('Thank you.')
     else:
         DBImport = DBImport + '.json'
         print('Thank you.')
-    # import json file
+    # import json file into the dictionary
     with open(PATH_CHANGE + DBImport, 'r') as f:
         Global.TableDict = json.load(f)
     Global.TableDict2 = Global.TableDict
@@ -107,21 +107,26 @@ def menu():
             t1.join()
         case '4':
             if Global.online == True:
+                print('========================================')
                 cur.execute("SELECT * FROM Companies")
                 print(cur.fetchall())
                 cur.execute("SELECT * FROM Warehouses")
                 print(cur.fetchall())
                 cur.execute("SELECT * FROM OpeningHours")
                 print(cur.fetchall())
+                print('========================================')
                 menu()
             else:
                 print('You are not connected to a DB.')
                 menu()
         case '5':
-            with open('DBBackup.json', 'r') as f:
+            print('========================================')
+            with open('X:/sqlite/JSON/backup.json', 'r') as f:
                 print(json.load(f))
+            print('========================================')
             menu()
         case '6':
+            print('========================================')
             print(Global.TableDict)
             print('========================================')
             menu()

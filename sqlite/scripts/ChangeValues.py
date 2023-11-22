@@ -3,7 +3,6 @@ import Global
 import UpdateDB
 
 def ChangeValues():
-
     wantedit = input('What values do you want to change? (1. Company/ 2. Warehouse/ 3. OpeningHours/ 4. Quit): ')
     # this time with an UI to make it easier to change values
     
@@ -143,6 +142,7 @@ def ChangeValues():
             ChangeValues()
 
 def DeleteValues():
+    Global.DeleteData = True
     x = input('From what table do you want to delete? (1. Company/ 2. Warehouse/ 3. OpeningHours/ 4. Quit/ 5. Delete ALL!): ')
     match x:
         case '1':
@@ -272,10 +272,11 @@ def InsertValues():
     x = input('What table do you want to insert values into? (1. Company/Warehouse/OpeningHours | 2. Default Values (ONLY FOR FIRST TIME USE)/ 5. Quit): ')
     match x:
         case '1':
+            # Custom values
             print('Inserting values into Company table...')
             x1 = input('What ID do you want to insert? (int): ')
             x2 = input('What name do you want to insert? (str): ')
-            Global.TableDict[0].append((x1,x2))
+            Global.TableDict[0].append([x1,x2])
             
             print('Inserted values {x1} and {x2}.'.format(x1=x1,x2=x2))
             print('====================================================')
@@ -288,19 +289,20 @@ def InsertValues():
             x5 = input('What ZipCode do you want to insert? (str): ')
             x6 = input('What City do you want to insert? (str): ')
             x7 = input('What CountryCode do you want to insert? (str): ')
-            Global.TableDict[1].append((x1,x2,x3,x4,x5,x6,x7))
+            Global.TableDict[1].append([x1,x2,x3,x4,x5,x6,x7])
             
             print('Inserted values {x1}, {x2}, {x3}, {x4}, {x5}, {x6}, {x7}.'.format(x1=x1,x2=x2,x3=x3,x4=x4,x5=x5,x6=x6,x7=x7))
             print('====================================================')
             print('Inserting values into OpeningHours table...')
             
-            x = input('What ID do you want to insert? (int): ')
-            x = input('What WarehouseID do you want to insert? (int): ')
-            x = input('What Weekday do you want to insert? (int): ')
-            x = input('What FromHours do you want to insert? (str): ')
-            x = input('What ToHours do you want to insert? (str): ')
+            x1 = input('What ID do you want to insert? (int): ')
+            x2 = input('What WarehouseID do you want to insert? (int): ')
+            x3 = input('What Weekday do you want to insert? (int): ')
+            x4 = input('What FromHours do you want to insert? (str): ')
+            x5 = input('What ToHours do you want to insert? (str): ')
+            Global.TableDict[2].append([x1,x2,x3,x4,x5])
             print('Inserted values.')
-            InsertValues()
+            UpdateDB.Update()
         case '2':
             # Default values
             Global.TableDict = {
