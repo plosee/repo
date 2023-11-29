@@ -9,8 +9,6 @@ from flask_restful import Resource, Api, reqparse
 from werkzeug.utils import secure_filename
 from flask import request
 
-# Global variable to indicate API status
-g.api = True
 
 # Initialize Flask app and API
 app = Flask(__name__)
@@ -18,7 +16,7 @@ api = Api(app)
 
 # Set allowed extensions for file upload and upload folder path
 ALLOWED_EXTENSIONS = set(['json'])
-UPLOAD_FOLDER = 'X:/sqlite/JSON/'
+UPLOAD_FOLDER = '/JSON/'
 
 # Initialize request parser
 parser = reqparse.RequestParser()

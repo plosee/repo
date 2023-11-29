@@ -10,8 +10,7 @@ from threading import Thread
 TableDict = Global.TableDict
 TableDict2 = Global.TableDict2
 
-PATH = 'X:/sqlite/JSON/backup.json'
-PATH_CHANGE = 'X:/sqlite/JSON/'
+PATH_CHANGE = '/JSON/'
 
 # ask user if they want to use a DB
 DBChoice = Global.DBChoice
@@ -31,7 +30,7 @@ if DBChoice == 'y':
         print('Thank you.')
     
     # connect to db
-    Global.con = sqlite3.connect('X:/sqlite/scripts/' + DBName, check_same_thread=False)
+    Global.con = sqlite3.connect('/' + DBName, check_same_thread=False)
     con = Global.con
     Global.cur = con.cursor()
     cur = Global.cur
@@ -121,7 +120,7 @@ def menu():
                 menu()
         case '5':
             print('========================================')
-            with open('X:/sqlite/JSON/backup.json', 'r') as f:
+            with open('/JSON/backup.json', 'r') as f:
                 print(json.load(f))
             print('========================================')
             menu()
